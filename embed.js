@@ -1,36 +1,7 @@
-// (function() {
-//     // Look for the specific ID the client added to their page
-//     const container = document.getElementById('baby-name-generator-root');
-
-//     if (container) {
-//         // Create the iframe
-//         const iframe = document.createElement('iframe');
-//         iframe.src = "https://dev-lucido.github.io/baby-name-generator/";
-        
-//         // Styling to make it fit the container perfectly
-//         iframe.style.width = "100%";
-//         iframe.style.height = "600px"; // You can adjust this height
-//         iframe.style.border = "none";
-//         iframe.style.borderRadius = "8px";
-        
-//         // Inject the iframe into their div
-//         container.appendChild(iframe);
-//     } else {
-//         console.error("Error: Could not find <div id='baby-name-generator-root'> on this page.");
-//     }
-// })();
-
-
-
-
-
-
 (function () {
-  // Prevent double-initialization
   if (window.__babyNameWidgetLoaded) return;
   window.__babyNameWidgetLoaded = true;
 
-  // ── Styles ──────────────────────────────────────────────────────────────
   const style = document.createElement('style');
   style.textContent = `
     #bng-fab {
@@ -84,7 +55,6 @@
       display: block;
     }
 
-    /* Mobile: full-screen panel */
     @media (max-width: 480px) {
       #bng-panel {
         bottom: 0;
@@ -104,18 +74,15 @@
   `;
   document.head.appendChild(style);
 
-  // ── FAB button ───────────────────────────────────────────────────────────
   const fab = document.createElement('button');
   fab.id = 'bng-fab';
   fab.setAttribute('aria-label', 'Open Baby Name Generator');
   fab.innerHTML = `
-    <!-- Chat bubble icon -->
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
       <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H6l-2 2V4h16v10z"/>
     </svg>
   `;
 
-  // ── Panel with iframe ────────────────────────────────────────────────────
   const panel = document.createElement('div');
   panel.id = 'bng-panel';
 
@@ -123,29 +90,21 @@
   iframe.src = 'https://dev-lucido.github.io/baby-name-generator/';
   iframe.title = 'Baby Name Generator';
   iframe.allow = 'clipboard-write';
-  // Load iframe lazily on first open
   let iframeLoaded = false;
 
   panel.appendChild(iframe);
 
-  // ── Toggle logic ─────────────────────────────────────────────────────────
   let isOpen = false;
 
   fab.addEventListener('click', () => {
     isOpen = !isOpen;
 
     if (isOpen) {
-      // Lazy-load iframe
-      if (!iframeLoaded) {
-        iframe.src = iframe.src; // triggers load
-        iframeLoaded = true;
-      }
+      if (!iframeLoaded) { iframe.src = iframe.src; iframeLoaded = true; }
       panel.style.display = 'flex';
-      // Trigger animation on next frame
       requestAnimationFrame(() => panel.classList.add('bng-open'));
       fab.setAttribute('aria-label', 'Close Baby Name Generator');
       fab.innerHTML = `
-        <!-- X icon -->
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
           <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
         </svg>
@@ -158,14 +117,10 @@
           <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H6l-2 2V4h16v10z"/>
         </svg>
       `;
-      // Hide after transition
-      setTimeout(() => {
-        if (!isOpen) panel.style.display = 'none';
-      }, 200);
+      setTimeout(() => { if (!isOpen) panel.style.display = 'none'; }, 200);
     }
   });
 
-  // ── Mount ────────────────────────────────────────────────────────────────
   document.body.appendChild(panel);
   document.body.appendChild(fab);
 })();
